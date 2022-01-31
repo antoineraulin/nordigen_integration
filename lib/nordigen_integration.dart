@@ -10,6 +10,7 @@ part 'package:nordigen_integration/data_models/nordigen_account_models.dart';
 part 'package:nordigen_integration/data_models/nordigen_other_data_models.dart';
 part 'package:nordigen_integration/data_models/nordigen_requisition_model.dart';
 part 'package:nordigen_integration/data_models/nordigen_transaction_model.dart';
+part 'package:nordigen_integration/data_models/nordigen_category_models.dart';
 
 // Extensions
 part 'package:nordigen_integration/extensions/token.dart';
@@ -17,6 +18,7 @@ part 'package:nordigen_integration/extensions/institutions.dart';
 part 'package:nordigen_integration/extensions/agreements.dart';
 part 'package:nordigen_integration/extensions/requisitions.dart';
 part 'package:nordigen_integration/extensions/accounts.dart';
+part 'package:nordigen_integration/extensions/categories.dart';
 
 /// Encapsulation of the Nordigen Open Account Information API functions.
 ///
