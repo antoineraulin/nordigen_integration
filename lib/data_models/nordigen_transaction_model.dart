@@ -220,3 +220,152 @@ class TransactionData {
   @override
   String toString() => jsonEncode(toMap());
 }
+
+class PremiumTransactionData extends TransactionData {
+  const PremiumTransactionData({
+    String? id,
+    String? entryReference,
+    String? mandateId,
+    String? checkId,
+    String? creditorId,
+    String? bookingDate,
+    String? valueDate,
+    required AmountData transactionAmount,
+    this.categorisation,
+    this.cleaning,
+    this.enrichment,
+    this.patterns,
+    Map<String, dynamic>? currencyExchange,
+    String? creditorName,
+    Map<String, dynamic>? creditorAccount,
+    String? creditorAgent,
+    String? ultimateCreditor,
+    String? debtorName,
+    Map<String, dynamic>? debtorAccount,
+    String? debtorAgent,
+    String? ultimateDebtor,
+    String? remittanceInformationUnstructured,
+    List<String>? remittanceInformationUnstructuredArray,
+    String? remittanceInformationStructured,
+    List<dynamic>? remittanceInformationStructuredArray,
+    String? additionalInformation,
+    dynamic additionalInformationStructured,
+    String? purposeCode,
+    String? bankTransactionCode,
+    String? proprietaryBankTransactionCode,
+    Balance? balanceAfterTransaction,
+    List<String>? links,
+  }) : super(
+          id: id,
+          entryReference: entryReference,
+          mandateId: mandateId,
+          checkId: checkId,
+          creditorId: creditorId,
+          bookingDate: bookingDate,
+          valueDate: valueDate,
+          transactionAmount: transactionAmount,
+          currencyExchange: currencyExchange,
+          creditorName: creditorName,
+          creditorAccount: creditorAccount,
+          creditorAgent: creditorAgent,
+          ultimateCreditor: ultimateCreditor,
+          debtorName: debtorName,
+          debtorAccount: debtorAccount,
+          debtorAgent: debtorAgent,
+          ultimateDebtor: ultimateDebtor,
+          remittanceInformationUnstructured: remittanceInformationUnstructured,
+          remittanceInformationUnstructuredArray:
+              remittanceInformationUnstructuredArray,
+          remittanceInformationStructured: remittanceInformationStructured,
+          remittanceInformationStructuredArray:
+              remittanceInformationStructuredArray,
+          additionalInformation: additionalInformation,
+          additionalInformationStructured: additionalInformationStructured,
+          purposeCode: purposeCode,
+          bankTransactionCode: bankTransactionCode,
+          proprietaryBankTransactionCode: proprietaryBankTransactionCode,
+          balanceAfterTransaction: balanceAfterTransaction,
+          links: links,
+        );
+
+  factory PremiumTransactionData.fromMap(dynamic fetchedMap) =>
+      PremiumTransactionData(
+        id: fetchedMap['transactionId'] as String?,
+        entryReference: fetchedMap['entryReference'] as String?,
+        mandateId: fetchedMap['mandateId'] as String?,
+        checkId: fetchedMap['checkId'] as String?,
+        creditorId: fetchedMap['creditorId'] as String?,
+        bookingDate: fetchedMap['bookingDate'] as String?,
+        valueDate: fetchedMap['valueDate'] as String?,
+        transactionAmount: AmountData.fromMap(fetchedMap['transactionAmount']!),
+        categorisation: fetchedMap['categorisation'] == null
+            ? null
+            : Categorisation.fromMap(fetchedMap['categorisation']),
+        cleaning: fetchedMap['cleaning'] == null
+            ? null
+            : Cleaning.fromMap(fetchedMap['cleaning']),
+        enrichment: fetchedMap['enrichment'] == null
+            ? null
+            : Enrichment.fromMap(fetchedMap['enrichment']),
+        patterns: fetchedMap['patterns'] == null
+            ? null
+            : Patterns.fromMap(fetchedMap['patterns']),
+        currencyExchange:
+            fetchedMap['currencyExchange'] as Map<String, dynamic>?,
+        creditorName: fetchedMap['creditorName'] as String?,
+        creditorAccount: fetchedMap['creditorAccount'] as Map<String, dynamic>?,
+        creditorAgent: fetchedMap['creditorAgent'] as String?,
+        ultimateCreditor: fetchedMap['ultimateCreditor'] as String?,
+        debtorName: fetchedMap['debtorName'] as String?,
+        debtorAccount: fetchedMap['debtorAccount'] as Map<String, dynamic>?,
+        debtorAgent: fetchedMap['debtorAgent'] as String?,
+        ultimateDebtor: fetchedMap['ultimateDebtor'] as String?,
+        remittanceInformationUnstructured:
+            fetchedMap['remittanceInformationUnstructured'] as String?,
+        remittanceInformationUnstructuredArray:
+            (fetchedMap['remittanceInformationUnstructuredArray']
+                    as List<dynamic>?)
+                ?.map<String>((dynamic item) => item as String)
+                .toList(),
+        remittanceInformationStructured:
+            fetchedMap['remittanceInformationStructured'] as String?,
+        remittanceInformationStructuredArray:
+            fetchedMap['remittanceInformationStructuredArray']
+                as List<dynamic>?,
+        additionalInformation: fetchedMap['additionalInformation'] as String?,
+        additionalInformationStructured:
+            fetchedMap['additionalInformationStructured'] as dynamic,
+        purposeCode: fetchedMap['purposeCode'] as String?,
+        bankTransactionCode: fetchedMap['bankTransactionCode'] as String?,
+        proprietaryBankTransactionCode:
+            fetchedMap['proprietaryBankTransactionCode'] as String?,
+        // Verify key of balanceAfterTransaction from
+        // https://nordigen.com/en/docs/account-information/output/transactions/
+        balanceAfterTransaction: fetchedMap['balanceAfterTransaction'] != null
+            ? Balance?.fromMap(fetchedMap['balanceAfterTransaction'])
+            : null,
+        links: fetchedMap['_links'] as List<String>?,
+      );
+
+  /// Forms a [Map] of [String] keys and [dynamic] values from Class Data.
+  ///
+  /// Map Keys: https://nordigen.com/en/docs/account-information/output/transactions/
+  @override
+  Map<String, dynamic> toMap() => super.toMap()
+    ..['categorisation'] = categorisation?.toMap()
+    ..['cleaning'] = cleaning?.toMap()
+    ..['enrichment'] = enrichment?.toMap()
+    ..['patterns'] = patterns?.toMap();
+
+  /// The categorisation of the transaction.
+  final Categorisation? categorisation;
+
+  /// Clean transaction data
+  final Cleaning? cleaning;
+
+  /// Enriched transaction data
+  final Enrichment? enrichment;
+
+  /// Find transaction regularity, matching and anomaly patterns
+  final Patterns? patterns;
+}

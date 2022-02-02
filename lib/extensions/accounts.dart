@@ -105,3 +105,71 @@ extension NordigenAccountsEndpoints on NordigenAccountInfoAPI {
         .toList();
   }
 }
+
+extension NordigenPremiumAccountsEndpoints on NordigenAccountInfoAPI {
+  /// Get the Transactions of the Bank Account identified by [accountID].
+  ///
+  /// Use [country] parameter for more accuratey results in categories.
+  /// Should be a 2 letter country code.
+  ///
+  /// Returns a [Map] of [String] keys: 'booked', 'pending' with the relevant
+  /// list of [TransactionData]) for each.
+  ///
+  /// Refer to Step 6 of Nordigen Account Information API documentation.
+  Future<Map<String, List<PremiumTransactionData>>>
+      getPremiumAccountTransactions({
+    required String accountID,
+    String? country,
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    assert(accountID.isNotEmpty);
+    assert(country == null || country.length == 2);
+    // Make GET request and fetch output.
+
+    List<Map<String, String>> getParams = <Map<String, String>>[];
+    if (country != null) getParams.add(<String, String>{'country': country});
+    if (from != null)
+      getParams.add(<String, String>{
+        'date_from': '${from.year}-${from.month}-${from.day}'
+      });
+    if (to != null)
+      getParams
+          .add(<String, String>{'date_to': '${to.year}-${to.month}-${to.day}'});
+
+    String getParamsString = '';
+    if (getParams.isNotEmpty) {
+      getParamsString = '?' +
+          getParams.map((Map<String, String> param) {
+            return param.entries.map((MapEntry<String, String> entry) {
+              return '${entry.key}=${entry.value}';
+            }).join('&');
+          }).join('&');
+    }
+
+    final dynamic fetchedData = await _nordigenGetter(
+      endpointUrl:
+          'https://ob.nordigen.com/api/v2/accounts/premium/$accountID/transactions/$getParamsString',
+    );
+    // No Transactions retrieved case.
+    if (fetchedData['transactions'] == null)
+      return <String, List<PremiumTransactionData>>{};
+    final List<dynamic> bookedTransactions =
+            fetchedData['transactions']['booked'] ?? <dynamic>[],
+        pendingTransactions =
+            fetchedData['transactions']['pending'] ?? <dynamic>[];
+
+    // Form the received dynamic Lists of bookedTransactions and
+    // pendingTransactions into Lists<TransactionData> for convenience.
+    return <String, List<PremiumTransactionData>>{
+      'booked': bookedTransactions
+          .map<PremiumTransactionData>((dynamic transaction) =>
+              PremiumTransactionData.fromMap(transaction))
+          .toList(),
+      'pending': pendingTransactions
+          .map<PremiumTransactionData>((dynamic transaction) =>
+              PremiumTransactionData.fromMap(transaction))
+          .toList(),
+    };
+  }
+}

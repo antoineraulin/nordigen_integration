@@ -20,7 +20,7 @@ class CategoryData {
   factory CategoryData.fromMap(dynamic fetchedMap) => CategoryData(
         id: fetchedMap['id'] as int,
         level: fetchedMap['level'] as int,
-        parentId: fetchedMap['parent_id'] as int,
+        parentId: fetchedMap['parent_id'] as int?,
         readableTitle: fetchedMap['readable_title'] as String,
         type: _enumDecode(_categoryTypeEnumMap, fetchedMap['type']),
       );
@@ -43,7 +43,9 @@ class CategoryData {
   final int level;
 
   /// ID of the parent Category
-  final int parentId;
+  ///
+  /// Null if the Category is a root Category
+  final int? parentId;
 
   /// Readable title of the Category
   final String readableTitle;
@@ -100,4 +102,32 @@ K _enumDecode<K extends Enum, V>(
   }
 
   return unknownValue;
+}
+
+/// Transaction Categorisation
+///
+/// Refer https://nordigen.com/en/docs/account-information/premium/categorisation/
+class Categorisation {
+  const Categorisation({
+    required this.categoryTitle,
+    required this.categoryId,
+  });
+
+  /// For easy Data Model Generation from Map fetched by querying Nordigen.
+  factory Categorisation.fromMap(dynamic fetchedMap) => Categorisation(
+        categoryTitle: fetchedMap['categoryTitle'] as String,
+        categoryId: fetchedMap['categoryId'] as int,
+      );
+
+  /// Forms a [Map] of [String] keys and [dynamic] values from Class Data.
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'categoryTitle': categoryTitle,
+        'categoryId': categoryId,
+      };
+
+  /// Title of the Category
+  final String categoryTitle;
+
+  /// ID of the Category
+  final int categoryId;
 }

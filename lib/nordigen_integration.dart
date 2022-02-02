@@ -11,6 +11,9 @@ part 'package:nordigen_integration/data_models/nordigen_other_data_models.dart';
 part 'package:nordigen_integration/data_models/nordigen_requisition_model.dart';
 part 'package:nordigen_integration/data_models/nordigen_transaction_model.dart';
 part 'package:nordigen_integration/data_models/nordigen_category_models.dart';
+part 'package:nordigen_integration/data_models/nordigen_cleaning_model.dart';
+part 'package:nordigen_integration/data_models/nordigen_enrichment_models.dart';
+part 'package:nordigen_integration/data_models/nordigen_patterns_model.dart';
 
 // Extensions
 part 'package:nordigen_integration/extensions/token.dart';
@@ -144,6 +147,66 @@ class NordigenAccountInfoAPI {
   Future<dynamic> _nordigenDeleter({required String endpointUrl}) async {
     final Uri requestURL = Uri.parse(endpointUrl);
     final http.Response response = await _client.delete(
+      requestURL,
+      headers: _headers,
+    );
+    if ((response.statusCode / 100).floor() == 2) {
+      return jsonDecode(utf8.decoder.convert(response.bodyBytes));
+    } else
+      throw http.ClientException(
+        'Error Code: ${response.statusCode}, '
+        // ignore: lines_longer_than_80_chars
+        'Reason: ${jsonDecode(utf8.decoder.convert(response.bodyBytes))["detail"]}',
+        requestURL,
+      );
+  }
+}
+
+class NordigenPremiumAPI {
+  /// Initialize the Nordigen API with a pre-generated Nordigen Access Token.
+  NordigenPremiumAPI({required String accessToken})
+      : _accessToken = accessToken;
+
+  /// Nordigen API Access token required to access API functionality.
+  final String _accessToken;
+
+  /// Client initialization as we repeated requests to the same Server.
+  final http.Client _client = http.Client();
+
+  /// Initialize the Nordigen API with Access Token generated using Nordigen
+  /// client [clientID] (client_id) and [clientSecret] (client_secret).
+  ///
+  /// This is a convenience method that will generate a Nordigen Access Token
+  /// for you and return a [Future] that resolves to the initialized
+  /// [NordigenAccountInfoAPI] object using that Access Token.
+  ///
+  /// https://ob.nordigen.com/user-secrets/
+  static Future<NordigenPremiumAPI> fromSecret({
+    required String clientID,
+    required String clientSecret,
+  }) async {
+    final Map<String, dynamic> data =
+        await NordigenPremiumTokenEndpoints.createAccessToken(
+      clientID: clientID,
+      clientSecret: clientSecret,
+    );
+    return NordigenPremiumAPI(accessToken: data['access_token']!);
+  }
+
+  /// Generate headers for requests.
+  Map<String, String> get _headers => <String, String>{
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': '*',
+        'X-CSRFToken': _accessToken,
+      };
+
+  /// Utility class to easily make GET requests to Nordigen API endpoints.
+  Future<dynamic> _nordigenGetter({required String endpointUrl}) async {
+    final Uri requestURL = Uri.parse(endpointUrl);
+    final http.Response response = await _client.get(
       requestURL,
       headers: _headers,
     );

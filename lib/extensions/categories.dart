@@ -1,6 +1,6 @@
 part of 'package:nordigen_integration/nordigen_integration.dart';
 
-extension NordigenCategorisationEndpoints on NordigenAccountInfoAPI {
+extension NordigenCategorisationEndpoints on NordigenPremiumAPI {
   /// Retrieve the latest category tree
   ///
   /// [country] : Two letter country code filter for categories

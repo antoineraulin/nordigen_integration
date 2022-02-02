@@ -69,3 +69,38 @@ extension NordigenTokenEndpoints on NordigenAccountInfoAPI {
       );
   }
 }
+
+extension NordigenPremiumTokenEndpoints on NordigenPremiumAPI {
+  static Future<Map<String, dynamic>> createAccessToken({
+    required String clientID,
+    required String clientSecret,
+  }) async {
+    final Map<String, String> data = <String, String>{
+      'grant_type': 'client_credentials',
+      'client_id': clientID,
+      'client_secret': clientSecret,
+      'audience': 'https://nordigen/api',
+    };
+    // Make POST request and fetch output.
+    final http.Response response = await http.post(
+      Uri.parse('https://api.nordigen.com/oauth/token'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': '*',
+      },
+      body: json.encode(data),
+    );
+
+    if ((response.statusCode / 100).floor() == 2) {
+      return jsonDecode(utf8.decoder.convert(response.bodyBytes));
+    } else
+      throw http.ClientException(
+        'Error Code: ${response.statusCode}, '
+        // ignore: lines_longer_than_80_chars
+        'Reason: ${jsonDecode(utf8.decoder.convert(response.bodyBytes))["detail"]}',
+      );
+  }
+}
